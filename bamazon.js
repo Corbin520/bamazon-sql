@@ -42,11 +42,36 @@ function afterConnection() {
                     }).then(function (answer) {
                         // console.log(answer.quantity)
                         var stockQuantity = answer.quantity;
-                        stockLog(productNumber, stockQuantity)
+                        stockLog(productNumber, stockQuantity, answer, res)
                     });
 
                 connection.end();
             })
     })
 }
+
+
+
+// function that will take in the stock we have
+function stockLog(productNumber, stockQuantity, answer, res) {
+
+    for (var i = 0; i < res.length; i++) {
+    // console the stock in the database
+    console.log("-------------------")
+    console.log(res[i].stock_quantity)
+    console.log("-------------------")
+
+    if (stockQuantity <= res[i].stock_quantity) {
+        console.log("We have your products in stock")
+    } else {
+        console.log("Insufficient quantity!")
+    }
+    
+}
+}
+
+
+
+
+
 
