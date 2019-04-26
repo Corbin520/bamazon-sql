@@ -8,7 +8,7 @@ var connection = mysql.createConnection({
 
     user: "root",
 
-    password: "Password1",
+    password: "",
     database: "Bamazon",
 });
 
@@ -22,7 +22,16 @@ connection.connect(function (err) {
 function afterConnection() {
     connection.query("SELECT * FROM products", function (err, res) {
         if (err) throw err;
-        
+
+        for (var i = 0; i < res.length; i++) {
+            // This will give us all the items
+            console.log("---------------------");
+            console.log("Item id: " + res[i].item_id);
+            console.log("Product Name: " + res[i].product_name);
+            console.log("Department: " + res[i].department_name);
+            console.log("Price: $ " + res[i].price + ".00");
+            console.log("---------------------")
+        }
         // This will give us all the items
         // console.log(res);
         inquirer
@@ -32,6 +41,7 @@ function afterConnection() {
                 message: "What is the product number you are looking for?",
 
             }).then(function (answer) {
+
                 // console.log(answer.productNumber)
                 var productNumber = answer.productNumber;
                 inquirer
@@ -41,37 +51,28 @@ function afterConnection() {
                         message: "What quantity would you like?",
                     }).then(function (answer) {
                         // console.log(answer.quantity)
-                        var stockQuantity = answer.quantity;
-                        stockLog(productNumber, stockQuantity, answer, res)
+                        var purchaseQuantity = answer.quantity;
+                        stockLog(productNumber, purchaseQuantity)
+                        connection.end();
                     });
-
-                connection.end();
             })
     })
 }
 
 
-
 // function that will take in the stock we have
-function stockLog(productNumber, stockQuantity, answer, res) {
+function stockLog(productNumber, purchaseQuantity) {
+    connection.query("SELECT * FROM products where item_id = ?", [productNumber], function (err, res) {
+        if (err) throw err;
+        var item = res[0];
+        console.log(item);
+        
+        // console the stock in the database
 
-    for (var i = 0; i < res.length; i++) {
-    // console the stock in the database
-    console.log("-------------------")
-    console.log(res[i].stock_quantity)
-    console.log("-------------------")
-
-    if (stockQuantity <= res[i].stock_quantity) {
-        console.log("We have your products in stock")
-    } else {
-        console.log("Insufficient quantity!")
-    }
-    
+        if (purchaseQuantity <= item.stock_quantity) {
+            console.log("We have your products in stock")
+        } else {
+            console.log("Insufficient quantity!")
+        }
+    });
 }
-}
-
-
-
-
-
-
