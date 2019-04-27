@@ -65,22 +65,26 @@ function stockLog(productNumber, purchaseQuantity) {
         var price = res[0].price
         var name = res[0].product_name
         if (purchaseQuantity <= item.stock_quantity) {
+            console.log();
             console.log("We have your products in stock")
+            console.log();
             connection.query('UPDATE `products` SET `stock_quantity` = ? WHERE item_id = ?', [(item.stock_quantity - purchaseQuantity), item.item_id], function(error, results, fields){
             
                 connection.end();
+                console.log("--------------------");
+                console.log("Here is your order information:");
+                console.log();
+                console.log("Product: " + name);
+                console.log();
+                console.log("Your total purchase is: " + price * purchaseQuantity + ".00");
+                console.log("--------------------");
             })
         } else {
+            console.log();
             console.log("Insufficient quantity!");
+            console.log();
                 connection.end()
         }
-        console.log("--------------------");
-        console.log("Here is your order information:");
-        console.log();
-        console.log("Product: " + name);
-        console.log();
-        console.log("Your total purchase is: " + price * purchaseQuantity + ".00");
-        console.log("--------------------");
     
     });
 }
